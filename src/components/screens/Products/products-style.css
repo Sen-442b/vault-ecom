@@ -1,0 +1,44 @@
+/* Mobile Devices */
+/* Utils */
+.pos-fix-left {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 60%;
+  background-color: var(--background-theme);
+  z-index: 9;
+
+  word-break: break-all;
+}
+
+.heart-icon {
+  color: var(--red-variant);
+}
+
+.pos-abs-top-right-custom {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+.grid-min-col-1 {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media screen and (min-width: 767px) {
+  .pc-grid-col-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .pc-grid-col-2-20-80 {
+    display: grid;
+    grid-template-columns: 20fr 80fr;
+  }
+
+  .filters {
+    position: static;
+    width: auto;
+  }
+}

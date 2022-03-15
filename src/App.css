@@ -1,3 +1,6 @@
+@import url("https://prefix-ui.netlify.app/global.css");
+@import url("./components/screens/Home/home-styles.css");
+
 .App {
   text-align: center;
 }
