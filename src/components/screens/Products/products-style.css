@@ -7,6 +7,7 @@
   width: 60%;
   background-color: var(--background-theme);
   z-index: 9;
+  overflow-y: auto;
 
   word-break: break-all;
 }
@@ -26,7 +27,11 @@
   grid-template-columns: 1fr;
 }
 
-@media screen and (min-width: 767px) {
+.user-select-none {
+  user-select: none;
+}
+
+@media screen and (min-width: 1110px) {
   .pc-grid-col-4 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -35,6 +40,14 @@
   .pc-grid-col-2-20-80 {
     display: grid;
     grid-template-columns: 20fr 80fr;
+  }
+  .pc-grid-col-2-30-70 {
+    display: grid;
+    grid-template-columns: 30fr 70fr;
+  }
+  .pc-grid-col-2-40-60 {
+    display: grid;
+    grid-template-columns: 40fr 60fr;
   }
 
   .filters {

@@ -37,5 +37,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "main": "index.js",
+  "repository": "https://github.com/Sen-442b/vault-ecom.git",
+  "author": "Sen-442b <67971019+Sen-442b@users.noreply.github.com>",
+  "license": "MIT"
 }

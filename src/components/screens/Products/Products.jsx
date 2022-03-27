@@ -1,301 +1,241 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
+import { useProducts } from "../../global-context/product-context";
+import {
+  getSortedPrice,
+  getFilteredData,
+  minPrice,
+  maxPrice,
+} from "../../utils/util-products";
 
 const Products = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    dispatch({
+      type: "SELECTED_CATEGORY",
+      payload: location.state.selectedCategory,
+    });
+    return () =>
+      dispatch({
+        type: "UNSELECT_CATEGORY",
+        payload: location.state.selectedCategory,
+      });
+  }, []);
+
+  const { state, dispatch, ACTIONS } = useProducts();
+  const { products, filters } = state;
+  const { sortItemsBy, priceRange, categories, ratingRange } = filters;
+
+  const sortedData = getSortedPrice(products, sortItemsBy);
+
+  const filteredData = getFilteredData(
+    sortedData,
+    priceRange,
+    categories,
+    ratingRange
+  );
+  const getUniqueCategory = (data) =>
+    data.reduce(
+      (acc, cv) =>
+        !acc.includes(cv.categoryName) ? [...acc, cv.categoryName] : acc,
+      []
+    );
+
   return (
-    <main class="pc-grid-col-2-20-80">
-      <aside class="pos-fix-left padding-mdm flex-column filters">
-        <div class="flex-spc-btwn">
-          <h2 class="fs-mdm">Filters</h2>
-          <button class="danger-txt-hover">Clear</button>
+    <main className="pc-grid-col-2-20-80">
+      <aside className="pos-fix-left padding-mdm flex-column filters">
+        <div className="flex-spc-btwn">
+          <h2 className="fs-mdm">Filters</h2>
+          <button
+            className="danger-txt-hover"
+            onClick={() => dispatch({ type: ACTIONS.CLEAR_FILTERS })}
+          >
+            Clear
+          </button>
         </div>
         <div>
-          <h3 class="fs-mdm">Price</h3>
-          <div class="price-slider-container">
-            <ul class="flex-spc-btwn">
-              <li>50</li>
-              <li>150</li>
-              <li>200</li>
+          <h3 className="fs-mdm">Price</h3>
+          <div className="price-slider-container">
+            <ul className="flex-column gap-lrg">
+              <li>
+                <input
+                  type="radio"
+                  className="input-radio"
+                  name="rating-select"
+                  id="price-low-to-high"
+                  value="price-low-to-high"
+                  onChange={() =>
+                    dispatch({
+                      type: ACTIONS.SORT,
+                      payload: "PRICE_LOW_TO_HIGH",
+                    })
+                  }
+                />
+                <label htmlFor="price-low-to-high">Low to High</label>
+              </li>
+              <li>
+                <input
+                  type="radio"
+                  className="input-radio"
+                  name="rating-select"
+                  id="price-high-to-low"
+                  value="price-high-to-low"
+                  onChange={() =>
+                    dispatch({
+                      type: ACTIONS.SORT,
+                      payload: "PRICE_HIGH_TO_LOW",
+                    })
+                  }
+                />
+                <label htmlFor="price-high-to-low">High to Low</label>
+              </li>
+              <li>
+                <ul className="flex-spc-btwn">
+                  <li>{sortedData.length !== 0 ? minPrice(sortedData) : ""}</li>
+                  <li>
+                    {sortedData.length !== 0
+                      ? (maxPrice(sortedData) + minPrice(sortedData)) / 2
+                      : ""}
+                  </li>
+                  <li>{sortedData.length !== 0 ? maxPrice(sortedData) : ""}</li>
+                </ul>
+                <input
+                  type="range"
+                  className="slider"
+                  onChange={(e) =>
+                    dispatch({
+                      type: ACTIONS.PRICE,
+                      payload: Number(e.target.value),
+                    })
+                  }
+                  value={priceRange}
+                  min={sortedData.length !== 0 ? minPrice(sortedData) : 0}
+                  max={sortedData.length !== 0 ? maxPrice(sortedData) : 100}
+                  step="50"
+                />
+                <span className="flex-center">
+                  {priceRange === 0 ? "-" : priceRange}
+                </span>
+              </li>
             </ul>
-            <input type="range" class="slider" min="0" max="100" />
           </div>
         </div>
 
         <div>
-          <h3 class="fs-mdm">Category</h3>
-          <ul class="flex-column">
-            <li>
-              <input
-                type="checkbox"
-                class="input-checkbox"
-                name="online-business"
-                id="online-business"
-              />
-              <label for="online-business">Online Business</label>
-            </li>
-            <li>
-              <input
-                type="checkbox"
-                class="input-checkbox"
-                name="Entrepreneurship"
-                id="Entrepreneurship"
-              />
-              <label for="Entrepreneurship">Entrepreneurship</label>
-            </li>
-            <li>
-              <input
-                type="checkbox"
-                class="input-checkbox"
-                name="Dropshipping"
-                id="Dropshipping"
-              />
-              <label for="Dropshipping">Dropshipping</label>
-            </li>
+          <h3 className="fs-mdm">Category</h3>
+          <ul className="flex-column">
+            {getUniqueCategory(sortedData).map((category, index) => {
+              return (
+                <li key={index}>
+                  <input
+                    type="checkbox"
+                    className="input-checkbox"
+                    name={"online-" + category}
+                    id={"online-" + category}
+                    checked={filters.categories.includes(category)}
+                    value={category}
+                    onChange={(e) =>
+                      dispatch({
+                        type: ACTIONS.CATEGORY,
+                        payload: e.target.value,
+                      })
+                    }
+                  />
+                  <label
+                    htmlFor={"online-" + category}
+                    className="user-select-none"
+                  >
+                    {category}
+                  </label>
+                </li>
+              );
+            })}
           </ul>
         </div>
         <div>
-          <h3 class="fs-mdm">Rating</h3>
-          <ul class="flex-column">
-            <li>
-              <input
-                type="radio"
-                class="input-radio"
-                name="rating-select"
-                id="four-stars-plus"
-                value="four-stars-plus"
-              />
-              <label for="four-stars-plus">4 Stars & above</label>
-            </li>
-            <li>
-              <input
-                type="radio"
-                class="input-radio"
-                name="rating-select"
-                id="three-stars-plus"
-                value="three-stars-plus"
-              />
-              <label for="three-stars-plus">3 Stars & above</label>
-            </li>
-            <li>
-              <input
-                type="radio"
-                class="input-radio"
-                name="rating-select"
-                id="two-stars-plus"
-                value="three-stars-plus"
-              />
-              <label for="two-stars-plus">2 Stars & above</label>
-            </li>
-          </ul>
-        </div>
-        <div>
-          <h3 class="fs-mdm">Rating</h3>
-          <ul class="flex-column">
-            <li>
-              <input
-                type="radio"
-                class="input-radio"
-                name="price-select"
-                id="High-to-Low"
-                value="High-to-Low"
-              />
-              <label for="High-to-Low">High to Low</label>
-            </li>
-            <li>
-              <input
-                type="radio"
-                class="input-radio"
-                name="price-select"
-                id="Low-to-High"
-                value="Low-to-High"
-              />
-              <label for="Low-to-High">Low to High</label>
-            </li>
-          </ul>
+          <h3 className="fs-mdm">Rating</h3>
+          <div className="flex-column">
+            <input
+              name="price-range"
+              id="price-range"
+              type="range"
+              className="slider"
+              min="1"
+              max="5"
+              value={ratingRange}
+              onChange={(e) =>
+                dispatch({
+                  type: ACTIONS.RATING,
+                  payload: Number(e.target.value),
+                })
+              }
+            />
+            <label htmlFor="price-range" className="flex-center">
+              {ratingRange}
+              <i className="fas fa-star rating-positive"></i>
+            </label>
+          </div>
         </div>
       </aside>
       <div>
-        <h2 class="fs-mdm padding-sml">
-          Showing all the products
-          <span class="card-subtitle fs-sml"> (20)</span>
+        <h2 className="fs-mdm padding-sml">
+          Showing
+          <span className="card-subtitle fs-sml"> {filteredData.length} </span>
+          out of
+          <span className="card-subtitle fs-sml"> {products.length} </span>
+          products
         </h2>
-        <div class="grid-min-col-1 grid-center margin-mdm pc-grid-col-4 flex-gap-lrg padding-mdm">
-          <div class="curved-border flex-column box-shadow-uni">
-            <div class="image-container">
-              <img
-                class="image-resp curved-border-top"
-                src="./assets/dane-denear-image.jpg"
-                alt="dan denear image"
-              />
+        <div className="grid-min-col-1 grid-center margin-mdm pc-grid-col-4 flex-gap-lrg padding-mdm">
+          {filteredData.map((product) => {
+            const { id, title, teacher, price, image, rating, prevPrice } =
+              product;
+            return (
+              <div
+                className="curved-border flex-column box-shadow-uni"
+                key={id}
+              >
+                <div className="image-container">
+                  <img
+                    className="image-resp curved-border-top"
+                    src={image}
+                    alt={title}
+                  />
 
-              <div class="overlay-wrapper curved-border-top fs-lrg">
-                <a href="#" class="btn-icon-outlined">
-                  <i class="fas fa-play"></i>
-                </a>
+                  <div className="overlay-wrapper curved-border-top fs-lrg">
+                    <a href="#" className="btn-icon-outlined">
+                      <i className="fas fa-play"></i>
+                    </a>
+                  </div>
+                  <button className="pos-abs-top-right-custom fs-mdm border-radius-100">
+                    <span className="light-txt" title="Add to Wishlist">
+                      <i className="far fa-heart"></i>
+                    </span>
+                  </button>
+                </div>
+                <div className="text-align-center">
+                  <h2 className="headline-typography">{title}</h2>
+                  <h3 className="card-subtitle">
+                    By {teacher}
+                    <span className="margin-sml"> |2.5 hours|</span>
+                  </h3>
+                  <p>{rating}/5</p>
+                  <p>
+                    <span className="heading-strong">{price} </span>
+                    <span className="card-subtitle strike">{prevPrice}</span>
+                  </p>
+
+                  <div className="flex-center">
+                    <button className="btn btn-cta light-text-color btn-wide margin-none border-rad-none">
+                      Add to Cart
+                    </button>
+                  </div>
+                </div>
               </div>
-              <button class="pos-abs-top-right-custom fs-mdm border-radius-100">
-                <span class="light-txt">
-                  <i class="far fa-heart"></i>
-                </span>
-              </button>
-            </div>
-            <div class="text-align-center">
-              <h2 class="headline-typography">Remote Team Management</h2>
-              <h3 class="card-subtitle">
-                By Dane Denear <span class="margin-sml"> |2.5 hours|</span>
-              </h3>
-              <p>
-                <span class="heading-strong">₹1,500</span>
-                <span class="heading-light strike">₹3,000</span>
-              </p>
-
-              <div class="flex-center">
-                <button class="btn btn-cta light-text-color btn-wide margin-none border-rad-none">
-                  Add to Cart
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="curved-border flex-column box-shadow-uni">
-            <div class="image-container">
-              <img
-                class="image-resp curved-border-top"
-                src="./assets/dane-denear-image.jpg"
-                alt="dan denear image"
-              />
-
-              <div class="overlay-wrapper curved-border-top fs-lrg">
-                <a href="#" class="btn-icon-outlined">
-                  <i class="fas fa-play"></i>
-                </a>
-              </div>
-              <button class="pos-abs-top-right-custom fs-mdm border-radius-100">
-                <span class="light-txt">
-                  <i class="far fa-heart"></i>
-                </span>
-              </button>
-            </div>
-            <div class="text-align-center">
-              <h2 class="headline-typography">Remote Team Management</h2>
-              <h3 class="card-subtitle">
-                By Dane Denear <span class="margin-sml"> |2.5 hours|</span>
-              </h3>
-              <p>
-                <span class="heading-strong">₹1,500</span>
-              </p>
-
-              <div class="flex-center">
-                <button class="btn btn-cta light-text-color btn-wide margin-none border-rad-none">
-                  Add to Cart
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="curved-border flex-column box-shadow-uni">
-            <div class="image-container">
-              <img
-                class="image-resp curved-border-top"
-                src="./assets/dane-denear-image.jpg"
-                alt="dan denear image"
-              />
-
-              <div class="overlay-wrapper curved-border-top fs-lrg">
-                <a href="#" class="btn-icon-outlined">
-                  <i class="fas fa-play"></i>
-                </a>
-              </div>
-              <button class="pos-abs-top-right-custom fs-mdm border-radius-100">
-                <span class="light-txt">
-                  <i class="far fa-heart"></i>
-                </span>
-              </button>
-            </div>
-            <div class="text-align-center">
-              <h2 class="headline-typography">Remote Team Management</h2>
-              <h3 class="card-subtitle">
-                By Dane Denear <span class="margin-sml"> |2.5 hours|</span>
-              </h3>
-              <p>
-                <span class="heading-strong">₹1,500</span>
-              </p>
-
-              <div class="flex-center">
-                <button class="btn btn-cta light-text-color btn-wide margin-none border-rad-none">
-                  Add to Cart
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="curved-border flex-column box-shadow-uni">
-            <div class="image-container">
-              <img
-                class="image-resp curved-border-top"
-                src="./assets/dane-denear-image.jpg"
-                alt="dan denear image"
-              />
-
-              <div class="overlay-wrapper curved-border-top fs-lrg">
-                <a href="#" class="btn-icon-outlined">
-                  <i class="fas fa-play"></i>
-                </a>
-              </div>
-              <button class="pos-abs-top-right-custom fs-mdm border-radius-100">
-                <span class="light-txt">
-                  <i class="far fa-heart"></i>
-                </span>
-              </button>
-            </div>
-            <div class="text-align-center">
-              <h2 class="headline-typography">Remote Team Management</h2>
-              <h3 class="card-subtitle">
-                By Dane Denear <span class="margin-sml"> |2.5 hours|</span>
-              </h3>
-              <p>
-                <span class="heading-strong">₹1,500</span>
-              </p>
-
-              <div class="flex-center">
-                <button class="btn btn-cta light-text-color btn-wide margin-none border-rad-none">
-                  Add to Cart
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="curved-border flex-column box-shadow-uni">
-            <div class="image-container">
-              <img
-                class="image-resp curved-border-top"
-                src="./assets/dane-denear-image.jpg"
-                alt="dan denear image"
-              />
-
-              <div class="overlay-wrapper curved-border-top fs-lrg">
-                <a href="#" class="btn-icon-outlined">
-                  <i class="fas fa-play"></i>
-                </a>
-              </div>
-              <button class="pos-abs-top-right-custom fs-mdm border-radius-100">
-                <span class="red-txt">
-                  <i class="fas fa-heart"></i>
-                </span>
-              </button>
-            </div>
-            <div class="text-align-center">
-              <h2 class="headline-typography">Remote Team Management</h2>
-              <h3 class="card-subtitle">
-                By Dane Denear <span class="margin-sml"> |2.5 hours|</span>
-              </h3>
-              <p>
-                <span class="heading-strong">₹1,500</span>
-              </p>
-
-              <div class="flex-center">
-                <button class="btn btn-outlined btn-wide margin-none border-rad-none">
-                  <a href="./../cart-page/index.html">Go to Cart</a>
-                </button>
-              </div>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </div>
     </main>

@@ -1,8 +1,11 @@
 import axios from "axios";
 import React from "react";
 import { Link } from "react-router-dom";
+import { useAuthContext } from "../global-context/auth-context";
 
 const Navbar = () => {
+  const { isUserAuthenticated } = useAuthContext();
+
   return (
     <nav className="nav-bar border-rad-none">
       <button className="btn btn-outlined display-none" id="btn-nav-toggle">
@@ -10,11 +13,13 @@ const Navbar = () => {
       </button>
       <ul className="flex-gap-mdm">
         <li className="nav-image-container">
-          <img
-            className="image-resp border-rad-20"
-            src="https://i.pinimg.com/originals/3e/01/a3/3e01a31a0a5d9185e399f48802949f14.png"
-            alt="logo"
-          />
+          <Link to="/">
+            <img
+              className="image-resp border-rad-20"
+              src="https://i.pinimg.com/originals/3e/01/a3/3e01a31a0a5d9185e399f48802949f14.png"
+              alt="logo"
+            />
+          </Link>
         </li>
       </ul>
       <ul className="flex-spc-btwn">
@@ -32,17 +37,47 @@ const Navbar = () => {
       </ul>
       <ul className="flex-spc-btwn">
         <li>
-          <a href="./screens/cart-page/index.html" className="cta-text-hover">
-            <i className="fas fa-shopping-cart" aria-hidden="true"></i>
-          </a>
-        </li>
-        <li>
-          <button className="btn btn-cta box-shadow-none">Login</button>
-        </li>
-        <li>
-          <button className="btn btn-outlined border-none box-shadow-none">
-            <a href="./screens/signup/index.html"> Signup </a>
+          <button title="Cart">
+            <Link to={isUserAuthenticated ? "/cart" : "/log-in"}>
+              <i
+                className="fas fa-shopping-cart cta-text-hover"
+                aria-hidden="true"
+              ></i>
+            </Link>
           </button>
+        </li>
+        <li>
+          {isUserAuthenticated && (
+            <button className="cta-text-hover" title="Wishlist">
+              <i className="fas fa-bookmark" aria-hidden="true"></i>
+            </button>
+          )}
+        </li>
+        <li>
+          {isUserAuthenticated ? (
+            <button className="btn btn-cta box-shadow-none">
+              <Link to="/log-out">Logout</Link>
+            </button>
+          ) : (
+            <button className="btn btn-cta box-shadow-none">
+              <Link to="/log-in">Login</Link>
+            </button>
+          )}
+        </li>
+        <li>
+          {isUserAuthenticated ? (
+            <button>
+              <img
+                src="https://picsum.photos/200/300"
+                className="avatar avatar-xsml"
+                alt="random image"
+              />
+            </button>
+          ) : (
+            <button className="btn btn-outlined border-none box-shadow-none">
+              <Link to="/sign-up"> Sign up </Link>
+            </button>
+          )}
         </li>
       </ul>
     </nav>
