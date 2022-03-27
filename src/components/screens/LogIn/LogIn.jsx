@@ -165,7 +165,6 @@ const LogIn = () => {
           >
             Create a New Account
           </button>
-          <button onClick={() => logInService()}>check</button>
         </div>
       </div>
     </div>
