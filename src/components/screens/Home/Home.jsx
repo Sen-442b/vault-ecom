@@ -1,5 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useProducts } from "../../global-context/product-context";
+
+/* Assets Import */
 import {
   AppSvg,
   ProfessionalWomenSvg,
@@ -8,8 +11,45 @@ import {
   DrumSetSvg,
 } from "../../../assets/Images";
 
-/* Assets Import */
 const Home = () => {
+  const { state } = useProducts();
+
+  const { products } = state;
+
+  const getFeaturedProducts = (productsArr, featType) => {
+    if (featType === "high-discount") {
+      return productsArr.reduce((acc, cv) => {
+        return cv.prevPrice - cv.price > acc.prevPrice - cv.price ? cv : acc;
+      });
+    } else if (featType === "high-rating") {
+      return productsArr.find((item) => item.rating === 5);
+    }
+    return productsArr;
+  };
+  const featByDisc =
+    products.length !== 0
+      ? getFeaturedProducts(products, "high-discount")
+      : {
+          title: "",
+          teacher: "",
+          price: "",
+          prevPrice: "",
+          image: "",
+          rating: "",
+        };
+
+  const featByRating =
+    products.length !== 0
+      ? getFeaturedProducts(products, "high-rating")
+      : {
+          title: "",
+          teacher: "",
+          price: "",
+          prevPrice: "",
+          image: "",
+          rating: "",
+        };
+  const { title, teacher, price, prevPrice, image, rating } = featByDisc;
   return (
     <main className="grid-homepage padding-sml">
       <div className="grid-homepage-hero grid-col-1 pc-grid-col-2--50-50">
@@ -36,12 +76,13 @@ const Home = () => {
             src={TeamSvg}
             alt="team"
           />
-          <a
-            href="./screens/product-listing-page/index.html"
+          <Link
+            to="/products"
+            state={{ selectedCategory: "Writing" }}
             className="pos-abs-bottom light-txt-dark-bg"
           >
-            Business
-          </a>
+            Writing
+          </Link>
         </div>
         <div className="courses-category-image-container">
           <img
@@ -49,12 +90,13 @@ const Home = () => {
             src={DrumSetSvg}
             alt="instruments"
           />
-          <a
-            href="./screens/product-listing-page/index.html"
+          <Link
+            to="/products"
+            state={{ selectedCategory: "Music" }}
             className="pos-abs-bottom light-txt-dark-bg"
           >
             Music
-          </a>
+          </Link>
         </div>
         <div className="courses-category-image-container">
           <img
@@ -62,12 +104,13 @@ const Home = () => {
             src={AppSvg}
             alt="brainstorming ideas"
           />
-          <a
-            href="./screens/product-listing-page/index.html"
+          <Link
+            to="/products"
+            state={{ selectedCategory: "Development" }}
             className="pos-abs-bottom light-txt-dark-bg"
           >
             Development
-          </a>
+          </Link>
         </div>
         <div className="courses-category-image-container">
           <img
@@ -75,143 +118,228 @@ const Home = () => {
             src={PersonalGrowth}
             alt="brainstorming ideas"
           />
-          <a
-            href="./screens/product-listing-page/index.html"
+          <Link
+            to="/products"
+            state={{ selectedCategory: "Personal Growth" }}
             className="pos-abs-bottom light-txt-dark-bg"
           >
             Personal Growth
-          </a>
+          </Link>
         </div>
       </div>
 
-      <div className="grid-homepage-card-one flex-f-start padding-sml curved-border box-shadow-uni">
-        <div className="card-showcase curved-border">
-          <div className="image-container">
-            <img
-              className="image-resp curved-border-top"
-              src="https://codingindian.com/wp-content/uploads/2021/06/1_uZ094Kxwv_qLih3tn9AZ6Q.jpeg"
-              alt="Quincy Larson"
-            />
-            <div className="overlay-wrapper curved-border-top fs-lrg">
-              <a href="#" className="btn-icon-outlined">
-                <i className="fas fa-play-circle"></i>
-              </a>
+      {products.length !== 0 && (
+        <div className="grid-homepage-card-one flex-f-start padding-sml curved-border box-shadow-uni">
+          <div className="card-showcase curved-border">
+            <div className="image-container">
+              <img
+                className="image-resp curved-border-top"
+                src={image}
+                alt={title}
+              />
+              <div className="overlay-wrapper curved-border-top fs-lrg">
+                <a href="#" className="btn-icon-outlined">
+                  <i className="fas fa-play-circle"></i>
+                </a>
+              </div>
+              <span className="text-badge pos-abs-top-left blip-animation">
+                {((price / prevPrice) * 100).toFixed(0)}%
+                <span className="fs-sml"> off</span>
+              </span>
             </div>
-            <span className="text-badge pos-abs-top-left blip-animation">
-              30%<span className="fs-sml"> off</span>
-            </span>
-          </div>
-          <div className="fi-btn-container flex-spc-arnd curved-border-bottom">
-            <button>
-              <span className="btn-icon-outlined">
-                <i className="fas fa-heart"></i>
-              </span>
-            </button>
-            <button>
-              <span className="btn-icon-outlined">
-                <i className="fas fa-bookmark"></i>
-              </span>
-            </button>
-            <button>
-              <span className="btn-icon-outlined">
-                <i className="fas fa-share"></i>
-              </span>
-            </button>
-          </div>
-        </div>
-        <div>
-          <h2 className="headline-typography">Modern JavaScript</h2>
-          <h3 className="card-subtitle">By-Jordan Walke</h3>
-          <div className="rating">
-            <span className="rating-positive">
-              <i className="fas fa-star"></i>
-            </span>
-            <span className="rating-positive">
-              <i className="fas fa-star"></i>
-            </span>
-            <span className="rating-positive">
-              <i className="fas fa-star"></i>
-            </span>
-            <span className="rating-positive">
-              <i className="fas fa-star"></i>
-            </span>
-            <span>
-              <i className="fas fa-star"></i>
-            </span>
-            <span className="fs-sml card-subtitle">4.0(300)</span>
-          </div>
-          <div className="fi-btn-container flex-f-start flex-gap-mdm">
-            <button className="btn btn-cta light-text-color">
-              <span>Enroll</span>
-            </button>
-            <button className="btn btn-outlined">About</button>
-          </div>
-        </div>
-      </div>
-      <div className="grid-homepage-card-two flex-f-start padding-sml curved-border box-shadow-uni">
-        <div className="card-showcase curved-border">
-          <div className="image-container">
-            <img
-              className="image-resp curved-border-top"
-              src="https://c1.wallpaperflare.com/preview/875/115/662/board-graphic-chalk-marketing-schema-chart.jpg"
-              alt="Market Growth"
-            />
-            <div className="overlay-wrapper curved-border-top fs-lrg">
-              <a href="#" className="btn-icon-outlined">
-                <i className="fas fa-play"></i>
-              </a>
+            <div className="fi-btn-container flex-spc-arnd curved-border-bottom">
+              <button>
+                <span className="btn-icon-outlined">
+                  <i className="fas fa-heart"></i>
+                </span>
+              </button>
+              <button>
+                <span className="btn-icon-outlined">
+                  <i className="fas fa-bookmark"></i>
+                </span>
+              </button>
+              <button>
+                <span className="btn-icon-outlined">
+                  <i className="fas fa-share"></i>
+                </span>
+              </button>
             </div>
-            <span className="text-badge pos-abs-top-left">Bestseller</span>
           </div>
-          <div className="fi-btn-container flex-spc-arnd curved-border-bottom">
-            <button>
-              <span className="btn-icon-outlined">
-                <i className="fas fa-heart"></i>
+          <div className="text-align-left">
+            <h2 className="headline-typography">{title}</h2>
+            <h3 className="card-subtitle">By-{teacher}</h3>
+            <div className="rating">
+              <span className="rating-positive">
+                <i className="fas fa-star"></i>
               </span>
-            </button>
-            <button>
-              <span className="btn-icon-outlined">
-                <i className="fas fa-bookmark"></i>
+              <span className="rating-positive">
+                <i className="fas fa-star"></i>
               </span>
-            </button>
-            <button>
-              <span className="btn-icon-outlined">
-                <i className="fas fa-share"></i>
+              <span className="rating-positive">
+                <i className="fas fa-star"></i>
               </span>
-            </button>
+              <span className="rating-positive">
+                <i className="fas fa-star"></i>
+              </span>
+              <span>
+                <i className="fas fa-star"></i>
+              </span>
+              <span className="fs-sml card-subtitle">{rating}</span>
+            </div>
+            <div className="fi-btn-container flex-f-start flex-gap-mdm">
+              <button className="btn btn-cta light-text-color">
+                Add to Cart
+              </button>
+              <button className="btn btn-outlined">About</button>
+            </div>
           </div>
         </div>
-        <div>
-          <h2 className="headline-typography">Marketing Best Practices</h2>
-          <h3 className="card-subtitle">By Neil Patel</h3>
-          <div className="rating">
-            <span className="rating-positive">
-              <i className="fas fa-star"></i>
-            </span>
-            <span className="rating-positive">
-              <i className="fas fa-star"></i>
-            </span>
-            <span className="rating-positive">
-              <i className="fas fa-star"></i>
-            </span>
-            <span className="rating-positive">
-              <i className="fas fa-star"></i>
-            </span>
-            <span>
-              <i className="fas fa-star"></i>
-            </span>
-            <span className="fs-sml card-subtitle">4.0(300)</span>
+      )}
+
+      {products.length !== 0 && (
+        <div className="grid-homepage-card-two flex-f-start padding-sml curved-border box-shadow-uni">
+          <div className="card-showcase curved-border">
+            <div className="image-container">
+              <img
+                className="image-resp curved-border-top"
+                src={featByRating.image}
+                alt="Market Growth"
+              />
+              <div className="overlay-wrapper curved-border-top fs-lrg">
+                <a href="#" className="btn-icon-outlined">
+                  <i className="fas fa-play"></i>
+                </a>
+              </div>
+              <span className="text-badge pos-abs-top-left">Best Rated</span>
+            </div>
+            <div className="fi-btn-container flex-spc-arnd curved-border-bottom">
+              <button>
+                <span className="btn-icon-outlined">
+                  <i className="fas fa-heart"></i>
+                </span>
+              </button>
+              <button>
+                <span className="btn-icon-outlined">
+                  <i className="fas fa-bookmark"></i>
+                </span>
+              </button>
+              <button>
+                <span className="btn-icon-outlined">
+                  <i className="fas fa-share"></i>
+                </span>
+              </button>
+            </div>
           </div>
-          <div className="fi-btn-container flex-f-start flex-gap-mdm">
-            <button className="btn btn-cta light-text-color">
-              <span>Enroll</span>
-            </button>
-            <button className="btn btn-outlined">About</button>
+          <div className="text-align-left">
+            <h2 className="headline-typography">{featByRating.title}</h2>
+            <h3 className="card-subtitle">By{featByRating.teacher}</h3>
+            <div className="rating">
+              <span className="rating-positive">
+                <i className="fas fa-star"></i>
+              </span>
+              <span className="rating-positive">
+                <i className="fas fa-star"></i>
+              </span>
+              <span className="rating-positive">
+                <i className="fas fa-star"></i>
+              </span>
+              <span className="rating-positive">
+                <i className="fas fa-star"></i>
+              </span>
+              <span className="rating-positive">
+                <i className="fas fa-star"></i>
+              </span>
+              <span className="fs-sml card-subtitle">
+                {featByRating.rating}
+              </span>
+            </div>
+            <div className="fi-btn-container flex-f-start flex-gap-mdm">
+              <button className="btn btn-cta light-text-color">
+                <span>Add to Cart</span>
+              </button>
+              <button className="btn btn-outlined">About</button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </main>
   );
 };
 
 export default Home;
+
+//NOT A REDUNDANT COMMENT
+
+/*     
+     {getFeaturedProducts(products, "high-discount") &&
+        getFeaturedProducts(products, "high-discount")?.map((item) => {
+          const { title, teacher, price, prevPrice, image, rating } = item;
+          return (
+            <div className="grid-homepage-card-one flex-f-start padding-sml curved-border box-shadow-uni">
+              <div className="card-showcase curved-border">
+                <div className="image-container">
+                  <img
+                    className="image-resp curved-border-top"
+                    src={image}
+                    alt={title}
+                  />
+                  <div className="overlay-wrapper curved-border-top fs-lrg">
+                    <a href="#" className="btn-icon-outlined">
+                      <i className="fas fa-play-circle"></i>
+                    </a>
+                  </div>
+                  <span className="text-badge pos-abs-top-left blip-animation">
+                    {((price / prevPrice) * 100).toFixed(0)}
+                    <span className="fs-sml"> off</span>
+                  </span>
+                </div>
+                <div className="fi-btn-container flex-spc-arnd curved-border-bottom">
+                  <button>
+                    <span className="btn-icon-outlined">
+                      <i className="fas fa-heart"></i>
+                    </span>
+                  </button>
+                  <button>
+                    <span className="btn-icon-outlined">
+                      <i className="fas fa-bookmark"></i>
+                    </span>
+                  </button>
+                  <button>
+                    <span className="btn-icon-outlined">
+                      <i className="fas fa-share"></i>
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div className="text-align-left">
+                <h2 className="headline-typography">{title}</h2>
+                <h3 className="card-subtitle">By-{teacher}</h3>
+                <div className="rating">
+                  <span className="rating-positive">
+                    <i className="fas fa-star"></i>
+                  </span>
+                  <span className="rating-positive">
+                    <i className="fas fa-star"></i>
+                  </span>
+                  <span className="rating-positive">
+                    <i className="fas fa-star"></i>
+                  </span>
+                  <span className="rating-positive">
+                    <i className="fas fa-star"></i>
+                  </span>
+                  <span>
+                    <i className="fas fa-star"></i>
+                  </span>
+                  <span className="fs-sml card-subtitle">{rating}</span>
+                </div>
+                <div className="fi-btn-container flex-f-start flex-gap-mdm">
+                  <button className="btn btn-cta light-text-color">
+                    Add to Cart
+                  </button>
+                  <button className="btn btn-outlined">About</button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+*/
