@@ -2,9 +2,11 @@ import axios from "axios";
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../global-context/auth-context";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const { isUserAuthenticated } = useAuthContext();
+  const navigateTo = useNavigate();
 
   return (
     <nav className="nav-bar border-rad-none">
@@ -48,7 +50,11 @@ const Navbar = () => {
         </li>
         <li>
           {isUserAuthenticated && (
-            <button className="cta-text-hover" title="Wishlist">
+            <button
+              className="cta-text-hover"
+              title="Wishlist"
+              onClick={() => navigateTo("/wishlist")}
+            >
               <i className="fas fa-bookmark" aria-hidden="true"></i>
             </button>
           )}
