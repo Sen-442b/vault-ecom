@@ -49,7 +49,7 @@ const Navbar = () => {
       </ul>
       <ul className="flex-spc-btwn">
         <li>
-          <button title="Cart">
+          <button title="Cart" className="cursor-pointer">
             <NavLink
               to={isUserAuthenticated ? "/cart" : "/log-in"}
               className={({ isActive }) =>
@@ -76,7 +76,7 @@ const Navbar = () => {
               title="Wishlist"
               to="/wishlist"
             >
-              <span className="custom-icon-wrapper">
+              <span className="custom-icon-wrapper cursor-pointer">
                 <i
                   className="fas fa-bookmark cta-text-hover"
                   aria-hidden="true"

@@ -31,3 +31,7 @@
   place-items: center;
   color: var(--light-text-color);
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}
