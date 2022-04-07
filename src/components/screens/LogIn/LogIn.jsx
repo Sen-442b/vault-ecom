@@ -14,7 +14,7 @@ const logInService = async (email, password) => {
       (resp.status === 200 || resp.status === 201) && resp.data.encodedToken
     );
   } catch (error) {
-    console.log(error, "here error");
+    console.log(error);
   }
 };
 
@@ -30,15 +30,16 @@ const LogIn = () => {
 
   const userLoginHandler = async (userEmail, userPassword, persistUser) => {
     const encToken = await logInService(userEmail, userPassword);
-
-    if (encToken) {
-      persistUser
-        ? localStorage.setItem("token", encToken)
-        : sessionStorage.setItem("token", encToken);
-      setIsUserAuthenticated(true);
-      navigateTo("/");
-    } else {
-      console.log("user not found"); //ensure proper error handling
+    try {
+      if (encToken) {
+        persistUser
+          ? localStorage.setItem("token", encToken)
+          : sessionStorage.setItem("token", encToken);
+        setIsUserAuthenticated(true);
+        navigateTo("/");
+      }
+    } catch (error) {
+      console.dir(error); //ensure proper error handling
     }
   };
 

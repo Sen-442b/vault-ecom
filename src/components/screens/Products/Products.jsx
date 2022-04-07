@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 import { useProducts } from "../../global-context/product-context";
+import ProductCard from "../../ProductCard/ProductCard";
 import {
   getSortedPrice,
   getFilteredData,
@@ -190,51 +191,9 @@ const Products = () => {
         </h2>
         <div className="grid-min-col-1 grid-center margin-mdm pc-grid-col-4 flex-gap-lrg padding-mdm">
           {filteredData.map((product) => {
-            const { id, title, teacher, price, image, rating, prevPrice } =
-              product;
-            return (
-              <div
-                className="curved-border flex-column box-shadow-uni"
-                key={id}
-              >
-                <div className="image-container">
-                  <img
-                    className="image-resp curved-border-top"
-                    src={image}
-                    alt={title}
-                  />
-
-                  <div className="overlay-wrapper curved-border-top fs-lrg">
-                    <a href="#" className="btn-icon-outlined">
-                      <i className="fas fa-play"></i>
-                    </a>
-                  </div>
-                  <button className="pos-abs-top-right-custom fs-mdm border-radius-100">
-                    <span className="light-txt" title="Add to Wishlist">
-                      <i className="far fa-heart"></i>
-                    </span>
-                  </button>
-                </div>
-                <div className="text-align-center">
-                  <h2 className="headline-typography">{title}</h2>
-                  <h3 className="card-subtitle">
-                    By {teacher}
-                    <span className="margin-sml"> |2.5 hours|</span>
-                  </h3>
-                  <p>{rating}/5</p>
-                  <p>
-                    <span className="heading-strong">{price} </span>
-                    <span className="card-subtitle strike">{prevPrice}</span>
-                  </p>
-
-                  <div className="flex-center">
-                    <button className="btn btn-cta light-text-color btn-wide margin-none border-rad-none">
-                      Add to Cart
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
+            console.log(product);
+            const { _id } = product;
+            return <ProductCard product={product} key={_id} />;
           })}
         </div>
       </div>

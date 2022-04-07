@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../global-context/auth-context";
 import { Link } from "react-router-dom";
+import { useErrorContext } from "../../global-context/error-context";
+import ErrorModal from "../../ErrorModal/ErrorModal";
 
 const SignUp = () => {
   const [userFormData, setUserFormData] = useState({
@@ -13,27 +15,27 @@ const SignUp = () => {
     password: "",
   });
 
-  const [error, setError] = useState({
-    hasError: false,
-    message: "",
-  });
   const navigateTo = useNavigate();
   const { setIsUserAuthenticated } = useAuthContext();
 
   const { userName, firstName, lastName, email, password } = userFormData;
-  const { hasError, message } = error;
+  const { error, setError } = useErrorContext();
+  const { hasError } = error;
 
   const userSignUpHandler = async () => {
     try {
       const response = await axios.post(`/api/auth/signup`, userFormData);
       // saving the encodedToken in the localStorage
-      console.log(response);
 
       localStorage.setItem("token", response.data.encodedToken);
       setIsUserAuthenticated(true);
       navigateTo("/");
     } catch (error) {
-      setError((prevObj) => ({ ...prevObj, hasError: true, message: "check" }));
+      setError((prevObj) => ({
+        ...prevObj,
+        hasError: true,
+        message: error.message,
+      }));
     }
   };
 
@@ -44,6 +46,7 @@ const SignUp = () => {
           <button
             className="btn btn-outlined btn-sml pos-abs-top-right box-shadow-none red-text-color"
             id="btn-close-modal"
+            onClick={() => navigateTo(-1)}
           >
             Close
           </button>
@@ -316,31 +319,7 @@ const SignUp = () => {
           </form>
         </div>
       )}
-      {hasError && (
-        <div className="modal-content padding-mdm margin-mdm flex-center">
-          <div className="text-align-center">
-            <p>Something Went Wrong</p>
-            <div className="alert alert-danger">
-              <span className="margin-sml">
-                <i className="fas fa-exclamation-circle"></i>
-              </span>
-              {message}
-            </div>
-            <button
-              className="btn btn-cta"
-              onClick={() =>
-                setError((prevObj) => ({
-                  ...prevObj,
-                  hasError: false,
-                  message: "",
-                }))
-              }
-            >
-              Go back
-            </button>
-          </div>
-        </div>
-      )}
+      {hasError && <ErrorModal />}
     </div>
   );
 };
