@@ -1,0 +1,33 @@
+.custom-icon-wrapper {
+  position: relative;
+}
+
+.custom-badge-notification {
+  background-color: var(--cta-background-color);
+  border: 0.3em solid var(--light-text-color);
+  transition: display 0.5s ease;
+  position: absolute;
+  min-width: 60%;
+  height: 53%;
+  top: -20.5%;
+  right: -28.31%;
+  font-size: 17%;
+  display: grid;
+  place-items: center;
+  color: var(--light-text-color);
+}
+
+.custom-badge-notification-wl {
+  background-color: var(--cta-background-color);
+  border: 0.3em solid var(--light-text-color);
+  transition: display 0.5s ease;
+  position: absolute;
+  min-width: 82%;
+  height: 56%;
+  top: -25.5%;
+  right: -46.31%;
+  font-size: 17%;
+  display: grid;
+  place-items: center;
+  color: var(--light-text-color);
+}

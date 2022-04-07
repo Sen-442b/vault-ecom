@@ -1,27 +1,37 @@
 import axios from "axios";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useAuthContext } from "../global-context/auth-context";
 import { useNavigate } from "react-router-dom";
+import { useCartlistContext } from "../global-context/cart-context";
+import { useWishlistContext } from "../global-context/wishlist-context";
 
 const Navbar = () => {
   const { isUserAuthenticated } = useAuthContext();
+  const { state: cartlistState } = useCartlistContext();
+  const { state: wishlistState } = useWishlistContext();
+  const { cartlist } = cartlistState;
+  const { wishlist } = wishlistState;
   const navigateTo = useNavigate();
 
   return (
     <nav className="nav-bar border-rad-none">
-      <button className="btn btn-outlined display-none" id="btn-nav-toggle">
+      <button
+        className="btn btn-outlined display-none"
+        id="btn-nav-toggle"
+        title="menu"
+      >
         <i className="fas fa-bars" aria-hidden="true"></i>
       </button>
       <ul className="flex-gap-mdm">
         <li className="nav-image-container">
-          <Link to="/">
+          <NavLink to="/">
             <img
               className="image-resp border-rad-20"
               src="https://i.pinimg.com/originals/3e/01/a3/3e01a31a0a5d9185e399f48802949f14.png"
               alt="logo"
             />
-          </Link>
+          </NavLink>
         </li>
       </ul>
       <ul className="flex-spc-btwn">
@@ -40,33 +50,54 @@ const Navbar = () => {
       <ul className="flex-spc-btwn">
         <li>
           <button title="Cart">
-            <Link to={isUserAuthenticated ? "/cart" : "/log-in"}>
-              <i
-                className="fas fa-shopping-cart cta-text-hover"
-                aria-hidden="true"
-              ></i>
-            </Link>
+            <NavLink
+              to={isUserAuthenticated ? "/cart" : "/log-in"}
+              className={({ isActive }) =>
+                isActive ? "cta-text" : "cta-text-hover"
+              }
+            >
+              <span className="custom-icon-wrapper">
+                <i className="fas fa-shopping-cart" aria-hidden="true"></i>
+                {cartlist.length > 0 && (
+                  <span className="badge custom-badge-notification">
+                    {cartlist.length}
+                  </span>
+                )}
+              </span>
+            </NavLink>
           </button>
         </li>
         <li>
           {isUserAuthenticated && (
-            <button
-              className="cta-text-hover"
+            <NavLink
+              className={({ isActive }) =>
+                isActive ? "cta-text" : "cta-text-hover"
+              }
               title="Wishlist"
-              onClick={() => navigateTo("/wishlist")}
+              to="/wishlist"
             >
-              <i className="fas fa-bookmark" aria-hidden="true"></i>
-            </button>
+              <span className="custom-icon-wrapper">
+                <i
+                  className="fas fa-bookmark cta-text-hover"
+                  aria-hidden="true"
+                ></i>
+                {wishlist.length > 0 && (
+                  <span className="badge custom-badge-notification-wl">
+                    {wishlist.length}
+                  </span>
+                )}
+              </span>
+            </NavLink>
           )}
         </li>
         <li>
           {isUserAuthenticated ? (
             <button className="btn btn-cta box-shadow-none">
-              <Link to="/log-out">Logout</Link>
+              <NavLink to="/log-out">Logout</NavLink>
             </button>
           ) : (
             <button className="btn btn-cta box-shadow-none">
-              <Link to="/log-in">Login</Link>
+              <NavLink to="/log-in">Login</NavLink>
             </button>
           )}
         </li>
@@ -81,7 +112,7 @@ const Navbar = () => {
             </button>
           ) : (
             <button className="btn btn-outlined border-none box-shadow-none">
-              <Link to="/sign-up"> Sign up </Link>
+              <NavLink to="/sign-up"> Sign up </NavLink>
             </button>
           )}
         </li>
