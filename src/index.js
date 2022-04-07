@@ -10,6 +10,7 @@ import { WishlistContextProvider } from "./components/global-context/wishlist-co
 import { GlobalContextProvider } from "./components/global-context/global-variables";
 import { CartContextProvider } from "./components/global-context/cart-context";
 import { ErrorContextProvider } from "./components/global-context/error-context";
+import { AlertTextContextProvider } from "./components/global-context/alert-text-context";
 
 // Call make Server
 makeServer();
@@ -20,13 +21,15 @@ ReactDOM.render(
       <AuthContextProvider>
         <GlobalContextProvider>
           <ErrorContextProvider>
-            <ProductContextProvider>
-              <WishlistContextProvider>
-                <CartContextProvider>
-                  <App />
-                </CartContextProvider>
-              </WishlistContextProvider>
-            </ProductContextProvider>
+            <AlertTextContextProvider>
+              <ProductContextProvider>
+                <WishlistContextProvider>
+                  <CartContextProvider>
+                    <App />
+                  </CartContextProvider>
+                </WishlistContextProvider>
+              </ProductContextProvider>
+            </AlertTextContextProvider>
           </ErrorContextProvider>
         </GlobalContextProvider>
       </AuthContextProvider>
