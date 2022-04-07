@@ -35,7 +35,8 @@ function ProductCard({ product }) {
     inCartlist: false,
   });
   const { inWishlist, inCartlist } = state;
-  const { _id, title, teacher, price, image, rating, prevPrice } = product;
+  const { _id, title, teacher, price, image, rating, prevPrice, isUpcoming } =
+    product;
   const { isUserAuthenticated } = useAuthContext();
   const { state: wishlistState, dispatch: wishlistDispatch } =
     useWishlistContext();
@@ -97,6 +98,9 @@ function ProductCard({ product }) {
     <div className="curved-border flex-column box-shadow-uni">
       <div className="image-container">
         <img className="image-resp curved-border-top" src={image} alt={title} />
+        {isUpcoming && (
+          <span className="text-badge pos-abs-center">Coming Soon</span>
+        )}
 
         <div>
           <button
@@ -125,16 +129,17 @@ function ProductCard({ product }) {
         <h2 className="headline-typography">{title}</h2>
         <h3 className="card-subtitle">
           By {teacher}
-          <span className="margin-sml"> |2.5 hours|</span>
+          {/* <span className="margin-sml"> |2.5 hours|</span> -- Upcoming feature*/}
         </h3>
         <p>{rating}/5</p>
         <p>
-          <span className="heading-strong">{price} </span>
+          <span className="heading-strong">₹ {price} </span>
           <span className="card-subtitle strike">{prevPrice}</span>
         </p>
 
         <div className="flex-center">
           <button
+            disabled={isUpcoming}
             className="btn btn-cta light-text-color btn-wide margin-none border-rad-none"
             onClick={
               isUserAuthenticated

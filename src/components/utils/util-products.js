@@ -11,14 +11,16 @@ export const getFilteredData = (
   sortedData,
   priceRange,
   categoryArr,
-  ratingRange
+  ratingRange,
+  includeUpcoming
 ) => {
   return sortedData
     .filter((item) => (priceRange ? item.price <= priceRange : true))
     .filter((item) => item.rating <= ratingRange)
     .filter((item) =>
       categoryArr.length !== 0 ? categoryArr.includes(item.categoryName) : true
-    );
+    )
+    .filter((item) => (includeUpcoming ? true : !item.isUpcoming));
 };
 export const minPrice = (sortedData) => {
   return sortedData.reduce((acc, cv) => {

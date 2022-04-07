@@ -9,12 +9,22 @@ const ACTIONS = {
   CATEGORY: "CATEGORY",
   CLEAR_FILTERS: "CLEAR_FILTERS",
   RATING: "RATING",
+  KEEP_UPCOMING: "KEEP_UPCOMING",
 };
-const { GET_PRODUCTS, SORT, PRICE, CATEGORY, CLEAR_FILTERS, RATING } = ACTIONS;
+const {
+  GET_PRODUCTS,
+  SORT,
+  PRICE,
+  CATEGORY,
+  CLEAR_FILTERS,
+  RATING,
+  KEEP_UPCOMING,
+} = ACTIONS;
 const initItems = {
   products: [],
   filters: {
     sortItemsBy: "",
+    includeUpcoming: false,
     priceRange: 0,
     ratingRange: 5,
     categories: [],
@@ -65,6 +75,15 @@ const productReducer = (state, action) => {
         ...state,
         filters: { ...state.filters, ratingRange: action.payload },
       };
+
+    case KEEP_UPCOMING:
+      return {
+        ...state,
+        filters: {
+          ...state.filters,
+          includeUpcoming: !state.filters.includeUpcoming,
+        },
+      };
     case "SELECTED_CATEGORY":
       return {
         ...state,
@@ -94,7 +113,6 @@ const ProductContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(productReducer, initItems);
 
   const getProductsData = () => {
-    console.log("sup");
     (async () => {
       const resp = await axios.get("/api/products");
 
