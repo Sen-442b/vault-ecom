@@ -17,10 +17,14 @@ const Home = () => {
   const { products } = state;
 
   const getFeaturedProducts = (productsArr, featType) => {
+    console.log(productsArr);
     if (featType === "high-discount") {
-      return productsArr.reduce((acc, cv) => {
-        return cv.prevPrice - cv.price > acc.prevPrice - cv.price ? cv : acc;
-      });
+      return productsArr.reduce((acc, cv) =>
+        ((cv.prevPrice - cv.price) / cv.prevPrice) * 100 >
+        ((acc.prevPrice - acc.price) / acc.prevPrice) * 100
+          ? cv
+          : acc
+      );
     } else if (featType === "high-rating") {
       return productsArr.find((item) => item.rating === 5);
     }
@@ -57,6 +61,9 @@ const Home = () => {
           <div className="padding-lrg text-align-center">
             <h1 className="fs-lrg">Vault</h1>
             <p>There is always one more thing to learn</p>
+            <button className="btn btn-cta">
+              <Link to="/products">Explore</Link>
+            </button>
           </div>
         </div>
         <div>
@@ -129,7 +136,7 @@ const Home = () => {
       </div>
 
       {products.length !== 0 && (
-        <div className="grid-homepage-card-one flex-f-start padding-sml curved-border box-shadow-uni">
+        <div className="grid-homepage-card-one flex-f-start padding-sml curved-border box-shadow-uni grid-col-2--50-50">
           <div className="card-showcase curved-border">
             <div className="image-container">
               <img
@@ -143,7 +150,7 @@ const Home = () => {
                 </a>
               </div>
               <span className="text-badge pos-abs-top-left blip-animation">
-                {((price / prevPrice) * 100).toFixed(0)}%
+                {(((prevPrice - price) / prevPrice) * 100).toFixed(0)}%
                 <span className="fs-sml"> off</span>
               </span>
             </div>
@@ -186,7 +193,7 @@ const Home = () => {
               </span>
               <span className="fs-sml card-subtitle">{rating}</span>
             </div>
-            <div className="fi-btn-container flex-f-start flex-gap-mdm">
+            <div className="fi-btn-container flex-f-start flex-gap-mdm flex-wrap">
               <button className="btn btn-cta light-text-color">
                 Add to Cart
               </button>
@@ -197,7 +204,7 @@ const Home = () => {
       )}
 
       {products.length !== 0 && (
-        <div className="grid-homepage-card-two flex-f-start padding-sml curved-border box-shadow-uni">
+        <div className="grid-homepage-card-two flex-f-start padding-sml curved-border box-shadow-uni grid-col-2--50-50">
           <div className="card-showcase curved-border">
             <div className="image-container">
               <img
@@ -253,7 +260,7 @@ const Home = () => {
                 {featByRating.rating}
               </span>
             </div>
-            <div className="fi-btn-container flex-f-start flex-gap-mdm">
+            <div className="fi-btn-container flex-f-start flex-gap-mdm flex-wrap">
               <button className="btn btn-cta light-text-color">
                 <span>Add to Cart</span>
               </button>
