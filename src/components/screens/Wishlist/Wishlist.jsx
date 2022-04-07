@@ -8,7 +8,7 @@ function Wishlist() {
   const { state } = useWishlistContext();
   const { wishlist } = state;
 
-  return (
+  return wishlist.length != 0 ? (
     <main className="padding-lrg grid-center">
       <h1 className="text-align-center">
         <span className="cta-text">
@@ -22,6 +22,13 @@ function Wishlist() {
             const { _id } = product;
             return <ProductCard key={_id} product={product} />;
           })}
+      </div>
+    </main>
+  ) : (
+    <main className="flex-center">
+      <div className="text-align-center">
+        <p className="fs-lrg ">Nothing to show here</p>
+        <p className="fs-lrg">🗑️</p>
       </div>
     </main>
   );

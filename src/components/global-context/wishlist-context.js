@@ -5,6 +5,7 @@ import {
   addToWishlistService,
   removeFromWishlistService,
 } from "../../services/wishlist-services";
+import { useAuthContext } from "./auth-context";
 import { useGlobalVarContext } from "./global-variables";
 
 const wishlistReducer = (state, action) => {
@@ -17,12 +18,13 @@ const wishlistReducer = (state, action) => {
 const WishlistContext = createContext();
 
 const WishlistContextProvider = ({ children }) => {
+  const { isUserAuthenticated } = useAuthContext();
   const { token } = useGlobalVarContext();
-  console.log(token, "here");
+
   const [state, dispatch] = useReducer(wishlistReducer, { wishlist: [] });
 
-  const getWishlist = () => {
-    (async () => {
+  const getWishlist = async (encToken) => {
+    if (encToken) {
       const response = await axios.get("/api/user/wishlist", {
         headers: {
           authorization: token,
@@ -30,10 +32,10 @@ const WishlistContextProvider = ({ children }) => {
       });
 
       dispatch({ type: "GET_WISHLIST", payload: response.data.wishlist });
-    })();
+    }
   };
 
-  useEffect(getWishlist, []);
+  useEffect(() => getWishlist(token), [token]);
 
   return (
     <WishlistContext.Provider value={{ state, dispatch }}>
