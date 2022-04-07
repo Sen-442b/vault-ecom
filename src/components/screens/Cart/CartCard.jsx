@@ -38,7 +38,7 @@ function CartCard({ product }) {
   };
 
   return (
-    <div className="light-bg-color">
+    <div className="light-bg-color cart-card-width">
       <div className="curved-border padding-sml box-shadow-uni">
         <div className="grid-col-2--50-50">
           <div className="curved-border">
@@ -74,7 +74,7 @@ function CartCard({ product }) {
 
             <h4 className="fs-mdm">
               <span className="cta-text">
-                {price} <i className="fas fa-tag"></i>
+                ₹ {price} <i className="fas fa-tag"></i>
               </span>
               <span className="fs-sml strike card-subtitle">{prevPrice}</span>
             </h4>

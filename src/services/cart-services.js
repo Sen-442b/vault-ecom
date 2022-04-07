@@ -1,6 +1,8 @@
 import axios from "axios";
 
 export const addToCartlistService = async (product, encToken) => {
+  console.log(product);
+  console.log(encToken);
   try {
     const response = await axios.post(
       "/api/user/cart",

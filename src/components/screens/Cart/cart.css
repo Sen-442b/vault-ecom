@@ -1,0 +1,13 @@
+@media screen and (min-width: 767px) {
+  .pc-height-100vh {
+    height: 100vh;
+  }
+}
+
+.cart-card-width {
+  max-width: 25rem;
+}
+
+/* .overflow-y-scroll {
+  overflow-y: scroll;
+} */
