@@ -13,12 +13,22 @@ const SignUp = () => {
     lastName: "",
     email: "",
     password: "",
+    matchPassword: "",
+    showPassword: false,
   });
 
   const navigateTo = useNavigate();
   const { setIsUserAuthenticated } = useAuthContext();
 
-  const { userName, firstName, lastName, email, password } = userFormData;
+  const {
+    userName,
+    firstName,
+    lastName,
+    email,
+    password,
+    matchPassword,
+    showPassword,
+  } = userFormData;
   const { error, setError } = useErrorContext();
   const { hasError } = error;
 
@@ -216,12 +226,37 @@ const SignUp = () => {
               <input
                 name="password-input"
                 className="form-input"
-                id="password-input"
                 required
                 aria-required="true"
                 autoComplete="off"
-                type="password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) =>
+                  setUserFormData((prevObj) => ({
+                    ...prevObj,
+                    password: e.target.value,
+                  }))
+                }
               />
+              {password && (
+                <button
+                  className="input-icon-margin"
+                  title={showPassword ? "Hide Password" : "Show Password"}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setUserFormData((prevObj) => ({
+                      ...prevObj,
+                      showPassword: !prevObj.showPassword,
+                    }));
+                  }}
+                >
+                  {showPassword ? (
+                    <i className="fa fa-eye-slash" aria-hidden="true"></i>
+                  ) : (
+                    <i className="fa fa-eye" aria-hidden="true"></i>
+                  )}
+                </button>
+              )}
               <small
                 className="alert alert-danger fs-sml padding-sml display-none"
                 id="password-text-error"
@@ -267,14 +302,15 @@ const SignUp = () => {
                 aria-required="true"
                 autoComplete="off"
                 type="password"
-                value={password}
+                value={matchPassword}
                 onChange={(e) =>
                   setUserFormData((prevObj) => ({
                     ...prevObj,
-                    password: e.target.value,
+                    matchPassword: e.target.value,
                   }))
                 }
               />
+
               <small
                 className="alert alert-danger fs-sml padding-sml display-none"
                 id="password-match-text-error"
@@ -308,6 +344,7 @@ const SignUp = () => {
               className="btn btn-cta"
               id="form-submit"
               value="Submit"
+              disabled={password && password === matchPassword ? false : true}
             />
             <div className="flex-f-end">
               <button>

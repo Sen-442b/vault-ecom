@@ -1,3 +1,7 @@
-@import url("https://prefix-ui.netlify.app/global.css");
+@import url("https://deploy-preview-13--prefix-ui.netlify.app/global.css");
 @import url("./components/screens/Home/home-styles.css");
 @import url("./components/screens/Products/products-style.css");
+@import url("./components/NavBar/nav-bar.css");
+@import url("./components/screens/Cart/cart.css");
+@import url("./components/screens/SignUp/sign-up.css");
+@import url("./components/screens/NotFound/not-found.css");

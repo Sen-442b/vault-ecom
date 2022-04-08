@@ -1,35 +1,51 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../global-context/auth-context";
-
-const logInService = async (email, password) => {
-  try {
-    const resp = await axios.post("/api/auth/login", {
-      email,
-      password,
-    });
-
-    return (
-      (resp.status === 200 || resp.status === 201) && resp.data.encodedToken
-    );
-  } catch (error) {
-    console.log(error);
-  }
-};
+import { useAlertTextContext } from "../../global-context/alert-text-context";
+import AlertText from "../../AlertText/AlertText";
 
 const LogIn = () => {
+  const { alertText, setAlertText } = useAlertTextContext();
+
   const [loginFormData, setLoginFormData] = useState({
     userEmail: "",
     userPassword: "",
     persistUser: true,
+    showPassword: false,
   });
-  const { userEmail, userPassword, persistUser } = loginFormData;
+  const { userEmail, userPassword, persistUser, showPassword } = loginFormData;
   const navigateTo = useNavigate();
   const { setIsUserAuthenticated } = useAuthContext();
+  const emailInputRef = useRef();
+  useEffect(() => emailInputRef.current.focus(), []);
+
+  const logInService = async (email, password) => {
+    try {
+      const resp = await axios.post("/api/auth/login", {
+        email,
+        password,
+      });
+
+      return (
+        (resp.status === 200 || resp.status === 201) && resp.data.encodedToken
+      );
+    } catch (error) {
+      setAlertText((prevObj) => ({
+        ...prevObj,
+        isActive: true,
+        message:
+          error.response.status === 404
+            ? "Incorrect username or password"
+            : "Something went wrong",
+        alertType: "danger",
+      }));
+    }
+  };
 
   const userLoginHandler = async (userEmail, userPassword, persistUser) => {
     const encToken = await logInService(userEmail, userPassword);
+
     try {
       if (encToken) {
         persistUser
@@ -39,7 +55,7 @@ const LogIn = () => {
         navigateTo("/");
       }
     } catch (error) {
-      console.dir(error); //ensure proper error handling
+      console.log(error); //ensure proper error handling
     }
   };
 
@@ -81,6 +97,7 @@ const LogIn = () => {
           </button>
         </div>
         <h4 className="text-align-center">Or</h4>
+        <div className="flex-center">{alertText.isActive && <AlertText />}</div>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -96,6 +113,7 @@ const LogIn = () => {
               className="form-input"
               id="email-input"
               required
+              ref={emailInputRef}
               onChange={(e) =>
                 setLoginFormData((prevObj) => ({
                   ...prevObj,
@@ -121,7 +139,7 @@ const LogIn = () => {
               required
               aria-required="true"
               autoComplete="off"
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={userPassword}
               onChange={(e) =>
                 setLoginFormData((prevObj) => ({
@@ -130,6 +148,25 @@ const LogIn = () => {
                 }))
               }
             />
+            {userPassword && (
+              <button
+                className="input-icon-margin"
+                title={showPassword ? "Hide Password" : "Show Password"}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setLoginFormData((prevObj) => ({
+                    ...prevObj,
+                    showPassword: !prevObj.showPassword,
+                  }));
+                }}
+              >
+                {showPassword ? (
+                  <i className="fa fa-eye-slash" aria-hidden="true"></i>
+                ) : (
+                  <i className="fa fa-eye" aria-hidden="true"></i>
+                )}
+              </button>
+            )}
           </div>
           <div className="flex-spc-btwn">
             <div>
@@ -156,6 +193,18 @@ const LogIn = () => {
           <div className="flex-column">
             <button className="btn btn-cta" type="submit">
               Login
+            </button>
+            <button
+              className="btn btn-outlined"
+              onClick={() =>
+                setLoginFormData((prevObj) => ({
+                  ...prevObj,
+                  userEmail: "johndoe@gmail.com",
+                  userPassword: "johnDoe123",
+                }))
+              }
+            >
+              Add Guest Credentials
             </button>
           </div>
         </form>

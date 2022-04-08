@@ -34,7 +34,7 @@
 .cursor-pointer {
   cursor: pointer;
 }
-@media screen and (min-width: 1110px) {
+@media screen and (min-width: 767px) {
   .pc-grid-col-4 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -52,9 +52,18 @@
     display: grid;
     grid-template-columns: 40fr 60fr;
   }
+  .pc-display-none {
+    display: none;
+  }
 
   .filters {
     position: static;
     width: auto;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .mob-tab-display-none {
+    display: none;
   }
 }

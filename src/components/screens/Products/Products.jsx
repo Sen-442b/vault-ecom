@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 import { useProducts } from "../../global-context/product-context";
@@ -13,22 +13,26 @@ import {
 
 const Products = () => {
   const location = useLocation();
+  const [displayFiltersMob, setDisplayFiltersMob] = useState(false);
 
   useEffect(() => {
-    dispatch({
-      type: "SELECTED_CATEGORY",
-      payload: location.state.selectedCategory,
-    });
-    return () =>
+    if (location.state) {
       dispatch({
-        type: "UNSELECT_CATEGORY",
+        type: "SELECTED_CATEGORY",
         payload: location.state.selectedCategory,
       });
+      return () =>
+        dispatch({
+          type: "UNSELECT_CATEGORY",
+          payload: location.state.selectedCategory,
+        });
+    }
   }, []);
 
   const { state, dispatch, ACTIONS } = useProducts();
   const { products, filters } = state;
-  const { sortItemsBy, priceRange, categories, ratingRange } = filters;
+  const { sortItemsBy, priceRange, categories, ratingRange, includeUpcoming } =
+    filters;
 
   const sortedData = getSortedPrice(products, sortItemsBy);
 
@@ -36,7 +40,8 @@ const Products = () => {
     sortedData,
     priceRange,
     categories,
-    ratingRange
+    ratingRange,
+    includeUpcoming
   );
   const getUniqueCategory = (data) =>
     data.reduce(
@@ -47,7 +52,30 @@ const Products = () => {
 
   return (
     <main className="pc-grid-col-2-20-80">
-      <aside className="pos-fix-left padding-mdm flex-column filters">
+      <div
+        className={`flex-center margin-sml ${
+          displayFiltersMob ? "display-none" : ""
+        } pc-display-none `}
+      >
+        <button title="Filters" onClick={() => setDisplayFiltersMob(true)}>
+          <i className="fas fa-bars"></i>
+        </button>
+      </div>
+
+      <aside
+        className={`pos-fix-left padding-mdm flex-column filters ${
+          displayFiltersMob ? "" : "mob-tab-display-none"
+        }`}
+      >
+        <div className={`flex-f-end pc-display-none`}>
+          <button
+            className="red-txt"
+            title="Close Tab"
+            onClick={() => setDisplayFiltersMob(false)}
+          >
+            <i className="fas fa-times-circle"></i>
+          </button>
+        </div>
         <div className="flex-spc-btwn">
           <h2 className="fs-mdm">Filters</h2>
           <button
@@ -118,7 +146,7 @@ const Products = () => {
                   step="50"
                 />
                 <span className="flex-center">
-                  {priceRange === 0 ? "-" : priceRange}
+                  {priceRange === 0 ? "-" : "₹ " + priceRange}
                 </span>
               </li>
             </ul>
@@ -180,6 +208,26 @@ const Products = () => {
             </label>
           </div>
         </div>
+        <div>
+          <h3 className="fs-mdm">Others </h3>
+          <ul className="flex-column">
+            <li>
+              <input
+                type="checkbox"
+                className="input-checkbox"
+                name="is-upcoming"
+                id="is-upcoming"
+                checked={includeUpcoming}
+                onChange={(e) =>
+                  dispatch({
+                    type: ACTIONS.KEEP_UPCOMING,
+                  })
+                }
+              />
+              <label htmlFor="is-upcoming">Include Upcoming </label>
+            </li>
+          </ul>
+        </div>
       </aside>
       <div>
         <h2 className="fs-mdm padding-sml">
@@ -187,11 +235,10 @@ const Products = () => {
           <span className="card-subtitle fs-sml"> {filteredData.length} </span>
           out of
           <span className="card-subtitle fs-sml"> {products.length} </span>
-          products
+          courses
         </h2>
         <div className="grid-min-col-1 grid-center margin-mdm pc-grid-col-4 flex-gap-lrg padding-mdm">
           {filteredData.map((product) => {
-            console.log(product);
             const { _id } = product;
             return <ProductCard product={product} key={_id} />;
           })}

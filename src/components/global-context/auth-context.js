@@ -12,7 +12,7 @@ const AuthContextProvider = ({ children }) => {
     hasEncToken ? setIsUserAuthenticated(true) : setIsUserAuthenticated(false);
   };
 
-  useEffect(getEncToken, [isUserAuthenticated]);
+  useEffect(getEncToken, []);
   return (
     <AuthContext.Provider
       value={{ isUserAuthenticated, setIsUserAuthenticated }}
