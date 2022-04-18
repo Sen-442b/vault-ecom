@@ -5,7 +5,7 @@ import CartCard from "./CartCard";
 function Cart() {
   const { state } = useCartlistContext();
   const { cartlist } = state;
-  console.log(cartlist);
+
   return cartlist.length !== 0 ? (
     <main className="grid-col-1 pc-grid-col-2--50-50 gap-mdm margin-top-sml pc-height-100vh">
       <div className="box-shadow-uni padding-mdm light-bg-color">

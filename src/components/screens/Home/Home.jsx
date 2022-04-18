@@ -17,7 +17,6 @@ const Home = () => {
   const { products } = state;
 
   const getFeaturedProducts = (productsArr, featType) => {
-    console.log(productsArr);
     if (featType === "high-discount") {
       return productsArr.reduce((acc, cv) =>
         ((cv.prevPrice - cv.price) / cv.prevPrice) * 100 >
@@ -185,7 +184,7 @@ const Home = () => {
               <span className="rating-positive">
                 <i className="fas fa-star"></i>
               </span>
-              <span className="rating-positive">
+              <span>
                 <i className="fas fa-star"></i>
               </span>
               <span>
